@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Node arduino</title>
+</head>
+
+<body>
+  <h1>Node Arduino</h1>
+  <canvas id="myChart"></canvas>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    let counter = 0
+    socket.on('arduino:data', (data) => {
+      myChart.data.labels.push(counter)
+      myChart.data.datasets.forEach(dataset => {
+        dataset.data.push(data.value)
+      })
+      counter++
+      myChart.update()
+    })
+
+    var ctx = document.getElementById('myChart');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['serial'],
+        datasets: [{
+          label: 'Serial',
+          bacgroundColor: "rgb(52,73,94)",
+          borderColor: "rgb(41,128,185)",
+          data: []
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
